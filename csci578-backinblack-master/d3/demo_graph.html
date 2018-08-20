@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Demo Graph</title>
+    <script src="parse_data.js" charset="utf-8"></script>
+    <style>
+        .demo_svg {
+            width: 1000px;
+            height: 500px;
+            padding-left: 5px;
+            padding-right: 5px;
+            padding-top: 5px;
+            padding-bottom: 5px;
+            margin: auto;
+        }
+    </style>
+    <script src="https://d3js.org/d3.v4.min.js" charset="utf-8"></script>
+    <script src="d3_script.js" charset="utf-8"></script>
+</head>
+<body>
+    <svg class="demo_svg" id="svg_canvas"></svg>
+    <script type="text/javascript">
+    // pre-parse data into compatible format
+    //List containing all the input nodes that we are passing as an input.
+    var newList = ["Root", "Node_1", "Node_10", "Node_100", "Node_101", "Node_102", "Node_103", "Node_104", "Node_105", "Node_106", "Node_107", "Node_108", "Node_109", "Node_11", "Node_110", "Node_111", "Node_112", "Node_12", "Node_14", "Node_2", "Node_3", "Node_4", "Node_5", "Node_6", "Node_7", "Node_8", "Node_9"];
+
+    var Data_Before_Parsing = findNodes(newList);
+    console.log(typeof Data_Before_Parsing);
+
+    var complete_data_example = [
+        {name: "Root", descendant: ["B", "C", "D", "E", "F", "G", "H"], ascendant: [], level: 1, x: 460, y: 50, expanded: false, highlighted: true},
+        {name: "Node_1", descendant: ["D", "E", "F"], ascendant: ["A"], level: 2, x: 230, y: 200, expanded: false, highlighted: true},
+        {name: "Node_10", descendant: ["G", "H"], ascendant: ["A"], level: 2, x: 750, y: 200, expanded: false, highlighted: true},
+        {name: "Node_100", descendant: [], ascendant: ["A", "B"], level: 3, x: 120, y: 300, expanded: false, highlighted: true},
+        {name: "Node_101", descendant: [], ascendant: ["A", "B"], level: 3, x: 230, y: 300, expanded: false, highlighted: true},
+        {name: "Node_102", descendant: [], ascendant: ["A", "B"], level: 3, x: 460, y: 300, expanded: false, highlighted: true},
+        {name: "Node_103", descendant: ["H"], ascendant: ["A", "C"], level: 3, x: 750, y: 300, expanded: false, highlighted: true},
+        {name: "Node_104", descendant: [], ascendant: ["A", "C", "G"], level: 4, x: 750, y: 400, expanded: false, highlighted: true}
+    ];
+
+    var Modified_Data = updateNodes(complete_data_example);
+    console.log("Modified:"+ Modified_Data);
+
+
+    var svg = d3.select("svg");
+    svg.attr("width", 1000).attr("height", 500);
+    var margin = {top: 20, bottom: 20, left: 30, right: 30};
+    var canvas = document.getElementById("svg_canvas");
+    console.log(canvas);
+    var width = canvas.getAttribute("width");
+    var height = canvas.getAttribute("height");
+    console.log("caculated width: " + width + ", height: " + height);
+
+    var g = svg.append("g");
+    var edge_array = [];
+    var max_level = 0;
+    var highlight_lines = [];
+    var highlight_nodes = [];
+    var asc_nodes = [];
+    var desc_nodes = [];
+    var asc_edges = [];
+    var desc_edges = [];
+    var nodes_to_highlight = [];
+    var nodes_to_collapse = [];
+
+    max_level = findMaxLevel(Data_Before_Parsing);
+    console.log("max level of the tree: " + max_level);
+
+    // calculate proportional height and width
+    var height_factor = (height - 50)/max_level;
+    console.log("height factor: " + height_factor);
+
+    var tree_level_map = calculateTreeLevel(Data_Before_Parsing);
+    // update data example
+    complete_data_example = calculateNodeAppearance(Data_Before_Parsing, tree_level_map, max_level);
+
+    constructLineArray();
+
+    startDrawingGraph();
+
+    </script>
+</body>
+</html>
